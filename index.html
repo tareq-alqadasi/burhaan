@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b6e99"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
+<title>برهان</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<style>
+:root{--bg:#eef2f6;--pn:#fff;--ink:#14233b;--mut:#5d6b80;--line:#d5dde7;--ac:#0b6e99;--ok:#2a8a55;--bad:#c4412b;--warn:#b57400}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1620;--pn:#16212e;--ink:#dbe6f2;--mut:#93a4ba;--line:#26354a;--ac:#5cc2f0;--ok:#5fcf93;--bad:#ff8a73;--warn:#e6b14d}}
+:root[data-theme="dark"]{--bg:#0e1620;--pn:#16212e;--ink:#dbe6f2;--mut:#93a4ba;--line:#26354a;--ac:#5cc2f0;--ok:#5fcf93;--bad:#ff8a73;--warn:#e6b14d}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:var(--bg) linear-gradient(var(--line) 1px,transparent 1px) 0 0/26px 26px;color:var(--ink);font:16px/1.7 "IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+header{position:sticky;top:0;z-index:5;display:flex;gap:8px;align-items:center;padding:10px 16px;background:var(--pn);border-bottom:2px solid var(--ink)}
+header a.logo{font-size:24px;font-weight:700;color:var(--ink);text-decoration:none;margin-inline-end:auto}
+main{max-width:820px;margin:0 auto;padding:16px 16px 80px}
+h1,h2,h3{line-height:1.3}h2{margin:28px 0 10px;font-size:20px}h3{font-size:17px;margin:18px 0 6px}
+.card{background:var(--pn);border:1px solid var(--line);border-inline-start:4px solid var(--ac);border-radius:4px 14px 14px 4px;padding:12px 16px;margin:10px 0}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.grow{flex:1}.mut{color:var(--mut);font-size:14px}
+button,.btn,select,input,textarea{font:inherit;color:var(--ink)}
+button,.btn{background:var(--pn);border:1px solid var(--ink);border-radius:8px;padding:5px 12px;cursor:pointer;text-decoration:none;display:inline-block}
+button.p{background:var(--ac);border-color:var(--ac);color:#fff}button:hover{filter:brightness(1.07)}
+input,select,textarea{background:var(--pn);border:1px solid var(--line);border-radius:6px;padding:6px 10px;max-width:100%}
+textarea{width:100%;font-family:ui-monospace,Consolas,monospace;font-size:15px;direction:ltr;text-align:left;min-height:110px}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;min-width:80px}.bar i{display:block;height:100%;background:var(--ok)}
+svg.g text{font:12px "Segoe UI",Tahoma,sans-serif;fill:var(--ink);text-anchor:middle;pointer-events:none}
+svg.g .e{stroke:var(--line);stroke-width:2;fill:none}svg.g g{cursor:pointer}
+svg.g rect{fill:var(--pn);stroke:var(--ink);stroke-width:1.5}
+svg.g .lock rect{stroke:var(--line);stroke-dasharray:4}svg.g .lock text{fill:var(--mut)}
+svg.g .done rect{fill:var(--ok);stroke:var(--ok)}svg.g .done text{fill:#fff}
+.wd{margin:10px 0}canvas{width:100%;max-width:640px;height:auto;background:var(--pn);border:1px solid var(--line);border-radius:8px;display:block}
+.sl{display:flex;gap:10px;align-items:center;direction:ltr;margin:4px 0}.sl input{flex:1}
+.tp{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;direction:ltr}.tp button{font-family:ui-monospace,Consolas,monospace;padding:3px 9px}
+.pv{direction:ltr;text-align:left;margin:8px 0;min-height:30px}.pv div{padding:2px 8px;border-inline-start:3px solid transparent}.pv .bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,transparent)}
+.res{padding:10px 14px;border-radius:8px;margin:10px 0;border:1px solid}.res.ok{color:var(--ok)}.res.no{color:var(--bad)}
+pre{direction:ltr;text-align:left;background:var(--pn);border:1px solid var(--line);padding:10px;overflow-x:auto;border-radius:6px}
+#toast{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom,0));left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:20px;z-index:9}
+.katex{font-size:1.1em}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header><a class="logo" href="#/">برهان</a><a class="btn" href="#/r" id="rv"></a><a class="btn" href="#/s">إعدادات</a></header>
+<main id="app"></main><div id="toast" hidden></div>
+<script>
+const $=(s,r=document)=>r.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function H(t,a,...k){const e=document.createElement(t);for(const[n,v]of Object.entries(a||{})){if(n.startsWith('on'))e.addEventListener(n.slice(2),v);else if(n==='html')e.innerHTML=v;else if(v!==false&&v!=null)e.setAttribute(n,v)}for(const c of k.flat())if(c!=null)e.append(c);return e}
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const K='br.';let S=Object.assign({cur:{},prog:{},cards:[],cfg:{theme:'auto',lean:''}},store.get(K+'s',{}));
+const save=()=>store.set(K+'s',S);
+function theme(){const t=S.cfg.theme;t==='auto'?document.documentElement.removeAttribute('data-theme'):document.documentElement.setAttribute('data-theme',t)}
+let tt;function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,2400)}
+const tex=(t,d)=>{try{return window.katex?katex.renderToString(t,{throwOnError:false,displayMode:!!d}):'<code dir="ltr">'+esc(t)+'</code>'}catch(e){return esc(t)}};
+const M=s=>String(s??'').split('$').map((p,i)=>i%2?tex(p):esc(p)).join('');
+const fmt=n=>+(+n).toFixed(4);
+
+/* ---------- LaTeX -> AST (no eval; safe for shared curricula) ---------- */
+function grp(s,i){while(s[i]===' ')i++;if(s[i]!=='{')return{t:s[i],e:i+1};let d=0,j=i;for(;j<s.length;j++){if(s[j]==='{')d++;if(s[j]==='}'&&--d===0)break}return{t:s.slice(i+1,j),e:j+1}}
+function lx(s){s=String(s).replace(/\\left|\\right|\\,|\\!|\\ /g,'').replace(/\\cdot|\\times/g,'*').replace(/\\pi/g,'pi').replace(/\\(sin|cos|tan|ln|sqrt|abs)/g,'$1');let m;
+while((m=s.indexOf('\\frac'))>=0){const a=grp(s,m+5),b=grp(s,a.e);s=s.slice(0,m)+'(('+a.t+')/('+b.t+'))'+s.slice(b.e)}return s.replace(/\{/g,'(').replace(/\}/g,')')}
+function P(src){const t=src.match(/sqrt|sin|cos|tan|ln|abs|pi|\d+\.?\d*|[a-z]|[-+*/^()=]/gi)||[];let i=0;const F=/^(sqrt|sin|cos|tan|ln|abs)$/;
+const ex=()=>{let a=tm();while(t[i]==='+'||t[i]==='-'){const o=t[i++];a=[o,a,tm()]}return a};
+const tm=()=>{let a=un();for(;;){const c=t[i];if(c==='*'||c==='/'){i++;a=[c,a,un()]}else if(c&&/^[\d.a-z(]/i.test(c))a=['*',a,un()];else return a}};
+const un=()=>{if(t[i]==='-'){i++;return['neg',un()]}if(t[i]==='+'){i++;return un()}const a=at();if(t[i]==='^'){i++;return['^',a,un()]}return a};
+const at=()=>{const c=t[i++];if(c==null)throw 0;if(c==='('){const a=ex();if(t[i++]!==')')throw 0;return a}if(/^\d/.test(c))return['n',+c];if(F.test(c))return['f',c,at()];if(c==='pi')return['n',Math.PI];if(/^[a-z]$/i.test(c))return['v',c];throw 0};
+const a=ex();if(t[i]==='='){i++;const r=['=',a,ex()];if(i<t.length)throw 0;return r}if(i<t.length)throw 0;return a}
+function ev(n,e){switch(n[0]){case'n':return n[1];case'v':{const v=e[n[1]];if(v==null)throw 0;return v}case'neg':return-ev(n[1],e);case'f':return Math[n[1]==='ln'?'log':n[1]](ev(n[2],e));default:{const a=ev(n[1],e),b=ev(n[2],e);return n[0]==='+'?a+b:n[0]==='-'?a-b:n[0]==='*'?a*b:n[0]==='/'?a/b:Math.pow(a,b)}}}
+function rts(a,env={},R=30){const f=x=>{try{return ev(a[1],{...env,x})-ev(a[2],{...env,x})}catch(e){return NaN}};const o=[];let p=f(-R),x0=-R;
+for(let x=-R+.01;x<=R;x+=.01){const c=f(x);if(isFinite(p)&&isFinite(c)&&(p===0||p*c<0)){let l=x0,h=x;for(let k=0;k<50;k++){const m=(l+h)/2;f(l)*f(m)<=0?h=m:l=m}const r=+((l+h)/2).toFixed(5);if(!o.length||Math.abs(o[o.length-1]-r)>1e-3)o.push(r)}p=c;x0=x}return o}
+function sm(a,b,env={}){for(let i=0;i<10;i++){const e={...env,x:Math.random()*6-3};let u,v;try{u=ev(a,e);v=ev(b,e)}catch(_){return false}if(isFinite(u)&&isFinite(v)&&Math.abs(u-v)>1e-6*(1+Math.abs(u)))return false}return true}
+function ln(n){switch(n[0]){case'n':return Number.isInteger(n[1])?'('+n[1]+':ℝ)':String(n[1]);case'v':return n[1];case'neg':return'(-'+ln(n[1])+')';case'f':return(n[1]==='sqrt'?'Real.sqrt':'Real.'+(n[1]==='ln'?'log':n[1]))+' '+ln(n[2]);case'=':return ln(n[1])+' = '+ln(n[2]);case'^':return'('+ln(n[1])+' ^ '+(n[2][0]==='n'&&Number.isInteger(n[2][1])?n[2][1]:ln(n[2]))+')';default:return'('+ln(n[1])+' '+n[0]+' '+ln(n[2])+')'}}
+
+/* ---------- exercises ---------- */
+const ri=v=>v[0]+Math.floor(Math.random()*(v[1]-v[0]+1));
+function mk(ex){const env={};for(const[k,v]of Object.entries(ex.vars||{}))env[k]=Array.isArray(v)?ri(v):ev(P(lx(v)),env);
+const fill=s=>String(s).replace(/\{(\+?)(\w+)\}/g,(_,p,n)=>{const v=env[n];return p?(v<0?'-'+-v:'+'+v):v});
+return{ex,env,q:fill(ex.text),eq:fill(ex.eq||ex.expr),ans:Array.isArray(ex.ans)?ex.ans.map(a=>ev(P(lx(a)),env)):ex.ans}}
+function rootForm(a){if(a[0]==='='&&a[1][0]==='v'&&a[1][1]==='x'){try{return ev(a[2],{})}catch(e){}}return null}
+function chk(I,txt){const L=txt.split('\n').map(s=>s.trim()).filter(Boolean);if(!L.length)return{ok:false,m:'اكتب خطوة واحدة على الأقل، كل خطوة في سطر.',L};
+const sol=I.ex.type==='solve';let prev=P(lx(I.eq)),got=[];
+for(let i=0;i<L.length;i++){let a;try{a=P(lx(L[i]))}catch(e){return{ok:false,s:i,L,m:`تعذّر فهم الخطوة ${i+1}. راجع الأقواس والرموز.`}}
+if(sol!==(a[0]==='='))return{ok:false,s:i,L,m:`الخطوة ${i+1}: ${sol?'يجب أن تكون معادلة فيها =':'يجب أن تكون تعبيرًا بلا ='}.`};
+if(sol){const c=rootForm(a),pr=rts(prev);if(c!=null){if(!pr.some(r=>Math.abs(r-c)<1e-3))return{ok:false,s:i,L,m:`الخطوة ${i+1}: القيمة ${fmt(c)} ليست حلًّا للمعادلة السابقة.`};got.push(c)}
+else{const r=rts(a);if(r.length!==pr.length||r.some((v,k)=>Math.abs(v-pr[k])>1e-3))return{ok:false,s:i,L,m:`الخطوة ${i+1} لا تكافئ ما قبلها: تغيّرت مجموعة الحلول (قبلها: ${pr.map(fmt).join('، ')||'—'}، وفيها: ${r.map(fmt).join('، ')||'—'}).`};prev=a}}
+else{if(!sm(a,prev,I.env))return{ok:false,s:i,L,m:`الخطوة ${i+1} لا تساوي الخطوة السابقة عند تجربة قيم مختلفة لـ x.`};prev=a}}
+if(sol){const miss=I.ans.filter(r=>!got.some(g=>Math.abs(g-r)<1e-3));if(miss.length)return{ok:false,L,s:L.length-1,m:`لم تصل إلى كل الحلول بصيغة x = قيمة. المفقود: ${miss.map(fmt).join('، ')}.`}}
+else if(!sm(prev,P(lx(I.ans)),I.env))return{ok:false,L,s:L.length-1,m:'الناتج النهائي لا يطابق الصيغة المبسّطة المطلوبة.'};
+return{ok:true,L}}
+function leanOf(I,L){const sol=I.ex.type==='solve';const A=P(lx(I.eq));if(!sol){return`example (x : ℝ) : ${ln(A)} = ${ln(P(lx(L[L.length-1])))} := by\n  ring`}
+let o=`example (x : ℝ) (h0 : ${ln(A)}) : ${I.ans.map(a=>'x = '+a).join(' ∨ ')} := by\n`,k=0;for(const l of L){const a=P(lx(l));if(rootForm(a)==null){k++;o+=`  have h${k} : ${ln(a)} := by nlinarith [h${k-1}]\n`}}
+return o+(I.ans.length===1?`  nlinarith [h${k}]`:`  sorry -- يحتاج mul_eq_zero / rcases`)}
+function rec(cid,lid,ei,ok,I){const k=[cid,lid,ei].join('|');let c=S.cards.find(x=>x.k===k);const D=864e5;
+if(!ok){c?(c.iv=0,c.n=0,c.d=Date.now()):S.cards.push({k,cid,lid,ei,iv:0,n:0,d:Date.now(),tag:I.ex.trap||''})}
+else{if(c){c.n++;c.iv=c.n===1?1:Math.round((c.iv||1)*2.5);c.d=Date.now()+c.iv*D;if(c.iv>30)S.cards=S.cards.filter(x=>x!==c)}
+const p=S.prog[cid]=S.prog[cid]||{};p[lid]=(p[lid]||0)+1}save();badge()}
+const TP=['\\frac{}{}','^{}','\\sqrt{}','\\cdot','=','(',')','x','\\pi','+','-'];
+function exUI(cid,lid,ei,I,done){const ta=H('textarea',{placeholder:'اكتب خطوات الحل بصيغة LaTeX، كل خطوة في سطر\nx+2=5\nx=3',dir:'ltr',spellcheck:'false'}),pv=H('div',{class:'pv'}),res=H('div'),lw=H('div');
+const draw=bad=>{pv.replaceChildren(...ta.value.split('\n').filter(s=>s.trim()).map((l,i)=>H('div',{class:i===bad?'bad':'',html:tex(l)})))};
+ta.addEventListener('input',()=>draw());
+const tps=H('div',{class:'tp'},TP.map(t=>H('button',{type:'button',onclick:()=>{const s=ta.selectionStart,v=ta.value;ta.value=v.slice(0,s)+t+v.slice(ta.selectionEnd);const j=t.indexOf('{');ta.focus();ta.selectionStart=ta.selectionEnd=s+(j>=0?j+1:t.length);draw()}},t)));
+const go=()=>{const r=chk(I,ta.value);draw(r.s);if(r.ok){const lean=leanOf(I,r.L);rec(cid,lid,ei,true,I);res.replaceChildren(H('div',{class:'res ok'},'✓ حلّ صحيح، وكل خطوة تكافئ التي قبلها.'),H('div',{class:'row'},H('button',{class:'p',onclick:()=>done()},'مسألة جديدة'),H('button',{onclick:()=>showLean(lean)},'صيغة Lean')))}
+else{rec(cid,lid,ei,false,I);res.replaceChildren(H('div',{class:'res no'},r.m,I.ex.trap?H('div',{class:'mut'},'انتبه: '+I.ex.trap):null,H('div',{class:'mut'},'حُفظ هذا الخطأ وسيعود إليك لاحقًا بأرقام جديدة.')))}};
+const showLean=code=>{lw.replaceChildren(H('pre',{},code),H('div',{class:'row'},H('button',{onclick:()=>{try{navigator.clipboard.writeText(code).then(()=>toast('تم النسخ'),()=>toast('حدّد النص وانسخه'))}catch(e){toast('حدّد النص وانسخه')}}},'نسخ'),S.cfg.lean?H('button',{onclick:()=>{fetch(S.cfg.lean,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code})}).then(r=>r.json()).then(j=>toast(j.ok?'Lean: صحيح ✓':'Lean: '+(j.msg||'خطأ')),()=>toast('تعذّر الاتصال بخادم Lean'))}},'تحقق بـ Lean'):H('span',{class:'mut'},'أضِف عنوان خادم Lean في الإعدادات للتحقق الآلي.')))};
+return H('div',{class:'card'},H('div',{html:M(I.q)}),H('div',{html:tex(I.eq,true)}),tps,ta,pv,H('div',{class:'row'},H('button',{class:'p',onclick:go},'تحقق')),res,lw)}
+
+/* ---------- curricula ---------- */
+function vc(j){if(!j||typeof j.id!=='string'||typeof j.title!=='string'||!Array.isArray(j.lessons)||!j.lessons.length)throw'ملف المنهج ينقصه id أو title أو lessons';const ids=new Set(j.lessons.map(l=>l.id));
+if(ids.size!==j.lessons.length)throw'معرّفات الدروس مكرّرة';for(const l of j.lessons){l.prereqs=l.prereqs||[];if(!l.title)throw'درس بلا عنوان';for(const p of l.prereqs)if(!ids.has(p))throw'متطلب غير موجود: '+p;for(const e of l.exercises||[]){try{mk(e)}catch(x){throw'تمرين غير صالح في الدرس '+l.id}}}
+const d={};const chkc=(l,s)=>{if(s.has(l.id))throw'دورة في المتطلبات';s=new Set(s).add(l.id);l.prereqs.forEach(p=>chkc(j.lessons.find(x=>x.id===p),s))};j.lessons.forEach(l=>chkc(l,new Set()));return j}
+function addCur(j){vc(j);S.cur[j.id]=j;save();toast('أُضيف المنهج: '+j.title)}
+const done=(cid,l)=>(S.prog[cid]?.[l.id]||0)>=3,open_=(c,l)=>l.prereqs.every(p=>done(c.id,c.lessons.find(x=>x.id===p)));
+const dueN=()=>S.cards.filter(c=>c.d<=Date.now()&&S.cur[c.cid]).length;
+function badge(){$('#rv').textContent='مراجعة'+(dueN()?' ('+dueN()+')':'')}
+
+const SAMPLE={id:'sample-algebra',title:'جبر أساسي: من الحدود إلى المعادلات',subject:'رياضيات',author:'برهان',lang:'ar',lessons:[
+{id:'like',title:'الحدود المتشابهة',prereqs:[],goals:['جمع الحدود التي لها المتغير نفسه'],intro:{text:'الحدّان $3x$ و $5x$ من النوع نفسه، لذلك يُجمعان كما نجمع أغراضًا متماثلة: $3x+5x=8x$. أما $3x$ و $5$ فلا يُجمعان.',widget:{type:'plot',f:'a*x+b*x',params:{a:[-3,3,1,1],b:[-3,3,2,1]}}},rules:[{name:'التجميع',tex:'ax+bx=(a+b)x'}],examples:[{q:'بسّط $2x+3x+4$',steps:['2x+3x+4','(2+3)x+4','5x+4']}],exercises:[{type:'expr',text:'بسّط التعبير:',expr:'{a}x+{b}x+{c}x',vars:{a:[2,9],b:[2,9],c:[1,9]},ans:'(a+b+c)*x',trap:'اجمع معاملات x كلها، ولا تُهمل أي حدّ.'}]},
+{id:'lin1',title:'معادلة خطية',prereqs:['like'],goals:['عزل المجهول بعمليات متساوية على الطرفين'],intro:{text:'الميزان: ما تفعله في كفّة افعله في الأخرى. حلّ $ax+b=c$ هو الموضع الذي يقطع فيه الخط المستقيم $y=ax+b-c$ المحور الأفقي. حرّك المنزلقات.',widget:{type:'plot',f:'a*x+b-c',params:{a:[1,5,2,1],b:[-6,6,1,1],c:[-6,6,5,1]}}},rules:[{name:'الجمع/الطرح على الطرفين',tex:'a=b\\Rightarrow a+k=b+k'},{name:'القسمة على الطرفين',tex:'ax=c\\Rightarrow x=\\frac{c}{a}'}],examples:[{q:'حلّ $2x+3=11$',steps:['2x+3=11','2x=8','x=4']}],exercises:[{type:'solve',text:'حلّ المعادلة:',eq:'{a}x+{b}={c}',vars:{a:[2,9],k:[1,9],b:[1,9],c:'a*k+b'},ans:['k'],trap:'اطرح الثابت من الطرفين قبل القسمة، ثم اقسم الطرفين على المعامل.'}]},
+{id:'lin2',title:'مجهول في الطرفين',prereqs:['lin1'],goals:['جمع حدود x في طرف واحد'],intro:{text:'انقل حدود $x$ إلى طرف والثوابت إلى الطرف الآخر، مع تغيير الإشارة عند النقل، ثم احلّ كما في الدرس السابق.'},rules:[{name:'النقل',tex:'ax+b=cx+d\\Rightarrow(a-c)x=d-b'}],examples:[{q:'حلّ $5x+2=2x+11$',steps:['5x+2=2x+11','3x+2=11','3x=9','x=3']}],exercises:[{type:'solve',text:'حلّ المعادلة:',eq:'{a}x+{b}={c}x+{d}',vars:{a:[4,9],c:[2,3],k:[1,9],b:[1,9],d:'a*k+b-c*k'},ans:['k'],trap:'عند نقل حدّ إلى الطرف الآخر تنعكس إشارته.'}]},
+{id:'quad',title:'التربيعية بالتحليل',prereqs:['lin1','like'],goals:['تحليل المعادلة وإيجاد الجذرين'],intro:{text:'إذا كان $(x-r)(x-s)=0$ فإما $x=r$ أو $x=s$. لاحظ في الرسم أن القطع المكافئ يقطع المحور عند الجذرين.',widget:{type:'plot',f:'(x-r)*(x-s)',params:{r:[-4,4,1,1],s:[-4,4,3,1]}}},rules:[{name:'الضرب الصفري',tex:'AB=0\\Rightarrow A=0\\ \\text{أو}\\ B=0'}],examples:[{q:'حلّ $x^2-5x+6=0$',steps:['x^2-5x+6=0','(x-2)(x-3)=0','x=2','x=3']}],exercises:[{type:'solve',text:'حلّ المعادلة، واكتب كل جذر في سطر x = قيمة:',eq:'x^2-{p}x+{q}=0',vars:{r:[1,4],s:[5,9],p:'r+s',q:'r*s'},ans:['r','s'],trap:'للمعادلة التربيعية جذران في الغالب؛ لا تتوقف عند الأول.'}]}]};
+if(!Object.keys(S.cur).length)S.cur[SAMPLE.id]=SAMPLE;
+const PROMPT=`أنت تلخّص كتابًا جامعيًا إلى منهج تفاعلي بصيغة JSON فقط (كتلة كود واحدة، بلا شرح). لخّص بصياغتك الخاصة ولا تنسخ نص الكتاب.
+المخطط: {"id":"slug","title":"","subject":"","author":"","lang":"ar","lessons":[{"id":"slug","title":"","prereqs":["ids"],"goals":[""],"intro":{"text":"شرح قصير، والرموز بين $...$","widget":{"type":"plot","f":"a*x+b","params":{"a":[min,max,default,step]}}},"rules":[{"name":"","tex":"LaTeX"}],"examples":[{"q":"","steps":["LaTeX لكل خطوة"]}],"exercises":[{"type":"solve|expr","text":"نص المسألة","eq":"قالب LaTeX مع {a} و{+b}","vars":{"a":[2,9],"c":"a*k+b"},"ans":["k"],"trap":"المعطى الذي يُهمله الطلاب عادة"}]}]}
+قواعد: رتّب الدروس من الأبسط، وحدّد prereqs بدقة (بلا دورات). type=solve: المجهول x، وans قائمة تعابير بمتغيرات vars، وتُبنى القيم بحيث يخرج الحل صحيحًا. type=expr: التمرين تبسيط، وexpr قالب التعبير وans نص التعبير المبسّط. المتغيرات تُعرَّف بالترتيب: مدى [min,max] أو تعبير من متغيرات سبقته. الرسم widget اختياري ودالته بالمتغير x. أنشئ 3 دروس على الأقل وتمرينًا أو أكثر لكل درس.
+محتوى الكتاب:
+`;
+
+/* ---------- views ---------- */
+function plot(w){const cv=H('canvas',{width:640,height:300}),pr={},bx=H('div',{class:'wd'},cv);const ast=P(lx(w.f));
+const draw=()=>{const g=cv.getContext('2d'),cs=getComputedStyle(document.documentElement),ink=cs.getPropertyValue('--ink'),ln_=cs.getPropertyValue('--line'),ac=cs.getPropertyValue('--ac'),W=640,Hh=300,u=30,cx=W/2,cy=Hh/2;g.clearRect(0,0,W,Hh);g.lineWidth=1;g.strokeStyle=ln_;
+for(let i=-11;i<=11;i++){g.beginPath();g.moveTo(cx+i*u,0);g.lineTo(cx+i*u,Hh);g.stroke()}for(let j=-5;j<=5;j++){g.beginPath();g.moveTo(0,cy+j*u);g.lineTo(W,cy+j*u);g.stroke()}
+g.strokeStyle=ink;g.lineWidth=1.5;g.beginPath();g.moveTo(0,cy);g.lineTo(W,cy);g.moveTo(cx,0);g.lineTo(cx,Hh);g.stroke();g.strokeStyle=ac;g.lineWidth=2.5;g.beginPath();let st=false;
+for(let p=0;p<=W;p+=2){const x=(p-cx)/u;let y;try{y=ev(ast,{...pr,x})}catch(e){y=NaN}if(isFinite(y)&&Math.abs(y)<20){const q=cy-y*u;st?g.lineTo(p,q):g.moveTo(p,q);st=true}else st=false}g.stroke();
+g.fillStyle=ac;for(const r of rts(['=',ast,['n',0]],pr,11)){g.beginPath();g.arc(cx+r*u,cy,5,0,7);g.fill();g.fillStyle=ink;g.font='12px sans-serif';g.fillText(fmt(r),cx+r*u-8,cy-10);g.fillStyle=ac}};
+for(const[k,v]of Object.entries(w.params||{})){pr[k]=v[2];const o=H('span',{},k+' = '+v[2]);bx.append(H('div',{class:'sl'},H('input',{type:'range',min:v[0],max:v[1],step:v[3]||.5,value:v[2],'aria-label':k,oninput:e=>{pr[k]=+e.target.value;o.textContent=k+' = '+pr[k];draw()}}),o))}
+setTimeout(draw,0);return bx}
+function home(){const a=$('#app');a.append(H('h1',{},'برهان'),H('p',{class:'mut'},'مناهج تفاعلية، حلول تكتبها بنفسك بصيغة LaTeX، وتصحيح خطوة بخطوة.'));
+a.append(H('h2',{},'مناهجي'));const ids=Object.keys(S.cur);if(!ids.length)a.append(H('p',{class:'mut'},'لا مناهج بعد. حمّل منهجًا من المكتبة أو استورد ملفًا.'));
+for(const id of ids){const c=S.cur[id],m=c.lessons.filter(l=>done(id,l)).length;a.append(H('div',{class:'card'},H('div',{class:'row'},H('a',{class:'grow',href:'#/c/'+encodeURIComponent(id)},H('b',{},c.title),H('div',{class:'mut'},(c.subject||'')+' · '+m+' من '+c.lessons.length+' دروس')),H('button',{onclick:()=>{dl(id+'.json',JSON.stringify(c,null,1))}},'تصدير'),H('button',{onclick:()=>{if(confirm('حذف المنهج وتقدّمه؟')){delete S.cur[id];delete S.prog[id];S.cards=S.cards.filter(x=>x.cid!==id);save();route()}}},'حذف')),H('div',{class:'bar'},H('i',{style:'width:'+100*m/c.lessons.length+'%'}))))}
+a.append(H('h2',{},'المكتبة'));const lib=H('div',{},H('p',{class:'mut'},'جارٍ التحميل…'));a.append(lib);
+fetch('library/index.json').then(r=>r.json()).then(L=>{lib.replaceChildren(...L.map(it=>H('div',{class:'card'},H('div',{class:'row'},H('div',{class:'grow'},H('b',{},it.title),H('div',{class:'mut'},[it.subject,it.author].filter(Boolean).join(' · '))),H('button',{class:'p',onclick:()=>fetch('library/'+it.file).then(r=>r.json()).then(j=>{addCur(j);route()}).catch(e=>toast(String(e)))},S.cur[it.id]?'تحديث':'تحميل')))))},()=>lib.replaceChildren(H('p',{class:'mut'},'لا توجد مكتبة هنا: أنشئ library/index.json بصيغة [{"id","title","subject","author","file"}] وضع ملفات المناهج بجانبه.')));
+const u=H('input',{placeholder:'رابط ملف منهج JSON',dir:'ltr',class:'grow'});
+a.append(H('h2',{},'إضافة منهج'),H('div',{class:'row'},H('input',{type:'file',accept:'.json',onchange:e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{addCur(JSON.parse(r.result));route()}catch(x){toast('ملف غير صالح: '+x)}};r.readAsText(f)}})),H('div',{class:'row'},u,H('button',{onclick:()=>fetch(u.value).then(r=>r.json()).then(j=>{addCur(j);route()}).catch(x=>toast('تعذّر الاستيراد: '+x))},'استيراد')),
+H('h3',{},'استخراج منهج من كتاب'),H('p',{class:'mut'},'انسخ هذا البرومبت إلى أي ذكاء اصطناعي، ألصق بعده محتوى الفصل، ثم استورد ملف JSON الناتج.'),H('button',{onclick:()=>{try{navigator.clipboard.writeText(PROMPT).then(()=>toast('تم النسخ'),()=>toast('تعذّر النسخ'))}catch(e){toast('تعذّر النسخ')}}},'نسخ البرومبت'))}
+function dl(name,text){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'application/json'}));a.download=name;document.body.appendChild(a);a.click();a.remove()}
+function curV(cid){const c=S.cur[cid],a=$('#app');if(!c)return location.hash='#/';a.append(H('h1',{},c.title),H('p',{class:'mut'},'الدرس يُفتح بعد إتقان متطلباته (3 حلول صحيحة لكل درس). الخط المتقطع = مقفل.'));
+const by={},d={};c.lessons.forEach(l=>by[l.id]=l);const dep=l=>d[l.id]??(d[l.id]=l.prereqs.length?1+Math.max(...l.prereqs.map(p=>dep(by[p]))):0);c.lessons.forEach(dep);
+const cols={};c.lessons.forEach(l=>(cols[d[l.id]]=cols[d[l.id]]||[]).push(l));const mx=Math.max(...Object.values(cols).map(x=>x.length)),W=Math.max(320,mx*160),Hh=(Math.max(...Object.values(d))+1)*90,pos={};
+Object.entries(cols).forEach(([dd,arr])=>arr.forEach((l,i)=>pos[l.id]={x:(i+.5)*W/arr.length,y:dd*90+30}));
+let s=`<svg class="g" viewBox="0 0 ${W} ${Hh}" width="100%" style="max-width:${W}px">`;c.lessons.forEach(l=>l.prereqs.forEach(p=>{const A=pos[p],B=pos[l.id];s+=`<path class="e" d="M${A.x} ${A.y+22}C${A.x} ${A.y+55} ${B.x} ${B.y-55} ${B.x} ${B.y-22}"/>`}));
+c.lessons.forEach(l=>{const p=pos[l.id],st=done(cid,l)?'done':open_(c,l)?'open':'lock';s+=`<g class="${st}" data-id="${esc(l.id)}" tabindex="0" role="button"><rect x="${p.x-68}" y="${p.y-22}" width="136" height="44" rx="10"/><text x="${p.x}" y="${p.y+4}">${esc(l.title.slice(0,20))}</text></g>`});
+const g=H('div',{html:s+'</svg>'});g.addEventListener('click',e=>{const n=e.target.closest('g[data-id]');if(!n)return;const l=by[n.dataset.id];open_(c,l)?location.hash='#/l/'+encodeURIComponent(cid)+'/'+encodeURIComponent(l.id):toast('أتقن المتطلبات أولًا: '+l.prereqs.map(p=>by[p].title).join('، '))});a.append(g)}
+function lesV(cid,lid){const c=S.cur[cid],l=c?.lessons.find(x=>x.id===lid),a=$('#app');if(!l||!open_(c,l))return location.hash='#/c/'+encodeURIComponent(cid);
+a.append(H('a',{href:'#/c/'+encodeURIComponent(cid)},'← الشبكة'),H('h1',{},l.title));
+if(l.goals?.length)a.append(H('div',{class:'mut',html:'المتوقع منك: '+l.goals.map(M).join('، ')}));
+if(l.intro){a.append(H('div',{class:'card',html:M(l.intro.text)}));if(l.intro.widget?.type==='plot'){try{a.append(plot(l.intro.widget))}catch(e){}}}
+if(l.rules?.length){a.append(H('h2',{},'القواعد'));l.rules.forEach(r=>a.append(H('div',{class:'card'},H('b',{},r.name),H('div',{html:tex(r.tex,true)}))))}
+if(l.examples?.length){a.append(H('h2',{},'أمثلة محلولة'));l.examples.forEach(e=>a.append(H('div',{class:'card'},H('div',{html:M(e.q)}),...e.steps.map(t=>H('div',{html:tex(t,true)})))))}
+const ex=l.exercises||[];if(!ex.length)return;a.append(H('h2',{},'تدرّب'));const box=H('div'),st=H('div',{class:'mut'});a.append(st,box);let n=0;
+const next=()=>{const ei=n++%ex.length;box.replaceChildren(exUI(cid,lid,ei,mk(ex[ei]),next));st.textContent='إتقان الدرس: '+Math.min(3,S.prog[cid]?.[lid]||0)+' من 3'+(done(cid,l)?' ✓ أُتقن':'')};
+next()}
+function revV(){const a=$('#app'),due=S.cards.filter(c=>c.d<=Date.now()&&S.cur[c.cid]);a.append(H('h1',{},'مراجعة الأخطاء'));
+if(!due.length)return a.append(H('p',{class:'mut'},S.cards.length?'لا شيء مستحق الآن. ستعود الأخطاء المحفوظة ('+S.cards.length+') في مواعيدها.':'لا أخطاء محفوظة. ابدأ بأي درس.'));
+const c=due[0],cu=S.cur[c.cid],l=cu.lessons.find(x=>x.id===c.lid),ex=l?.exercises?.[c.ei];if(!ex){S.cards=S.cards.filter(x=>x!==c);save();return route()}
+a.append(H('p',{class:'mut'},'من درس: '+l.title+' — مسألة جديدة من القالب نفسه.'),exUI(c.cid,c.lid,c.ei,mk(ex),()=>route()))}
+function setV(){const a=$('#app');const th=H('select',{onchange:e=>{S.cfg.theme=e.target.value;save();theme()}},[['auto','تلقائي'],['light','فاتح'],['dark','داكن']].map(([v,t])=>H('option',{value:v,selected:S.cfg.theme===v},t)));
+const lu=H('input',{dir:'ltr',value:S.cfg.lean,placeholder:'https://…/check (اختياري)',class:'grow',onchange:e=>{S.cfg.lean=e.target.value.trim();save()}});
+a.append(H('h1',{},'الإعدادات'),H('div',{class:'row'},'المظهر',th),H('h3',{},'خادم Lean (اختياري)'),H('p',{class:'mut'},'نقطة تستقبل POST بالشكل {"code": "..."} وتعيد {"ok": true|false, "msg": "..."}. بدونه يعمل التحقق الجبري داخل المتصفح وتُنسخ صيغة Lean للتحقق اليدوي.'),H('div',{class:'row'},lu),
+H('h3',{},'نسخة احتياطية'),H('p',{class:'mut'},'بياناتك محفوظة في هذا المتصفح فقط. صدّر نسخة بانتظام.'),H('div',{class:'row'},H('button',{onclick:()=>dl('burhan-backup-'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify(S,null,1))},'تصدير'),H('input',{type:'file',accept:'.json',onchange:e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);if(!j.cur||!j.cfg)throw 0;if(!confirm('استبدال كل البيانات؟'))return;S=Object.assign({cur:{},prog:{},cards:[],cfg:{theme:'auto',lean:''}},j);save();theme();route();toast('تم الاستيراد')}catch(x){toast('ليست نسخة احتياطية صالحة')}};r.readAsText(f)}}),H('button',{onclick:()=>{if(confirm('مسح كل شيء؟')){localStorage.removeItem(K+'s');location.href='#/';location.reload()}}},'مسح الكل')))}
+function route(){const h=location.hash.slice(2).split('/').map(decodeURIComponent);$('#app').replaceChildren();badge();try{({'':home,c:curV,l:lesV,r:revV,s:setV}[h[0]]||home)(h[1],h[2])}catch(e){$('#app').append(H('div',{class:'res no'},'حدث خطأ: '+e))}scrollTo(0,0)}
+addEventListener('hashchange',route);addEventListener('load',route);theme();route();
+</script>
+</body>
+</html>
